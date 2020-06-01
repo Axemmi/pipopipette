@@ -13,7 +13,7 @@ couleur_point = "#e863eb"
 #--------------------------------------
 #Fonctions
 #--------------------------------------
-def afficher_grille(): #bah ça affiche la grille vierge, donc les traits en pointillés et les ronds, les traits rouge ou bleu sont gérés ailleurss
+def afficher_grille(): #bah ça affiche la grille vierge, donc les traits en pointillés et les ronds, les traits rouge ou bleu sont gérés ailleurs
     for i in range(nombre_points):
         x = i*distance_entre_points+distance_entre_points/2
         canvas.create_line(x, distance_entre_points/2, x, dimensions_fenetre-distance_entre_points/2, fill='gray', dash = (2, 2))
@@ -34,7 +34,13 @@ canvas.pack()
 # window.bind('<Button-1>', click) --> fonction click pas encore crée, je commente pour éviter les erreurs
 tour_joueur1 = True
 afficher_grille()
-
+#--------------------------------------
+#Initialisation des tableaux
+#--------------------------------------
+statut_jeu = np.zeros(shape=(nombre_points - 1, nombre_points - 1)) #tableau des carrés
+statut_ligne = np.zeros(shape=(nombre_points, nombre_points - 1))
+col_status = np.zeros(shape=(nombre_points - 1, nombre_points))
+cases_cochees = []
 #--------------------------------------
 #Mainloop, je sais toujours pas ce que ça fait mais sinon le code se lance pas
 #--------------------------------------
