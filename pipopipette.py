@@ -25,9 +25,16 @@ def afficher_grille(): #bah ça affiche la grille vierge, donc les traits en poi
             end_x = j*distance_entre_points+distance_entre_points/2
             canvas.create_oval(start_x-epaisseur_point/2, end_x-epaisseur_point/2, start_x+epaisseur_point/2, end_x+epaisseur_point/2, fill=couleur_point, outline=couleur_point)
 
-def click(event):
-    position_ecran = [event.x, event.y]
+def convertir_position_ecran_vers_jeu(position_ecran):
+    position_ecran = np.array(position_ecran) #en gros ça convertit la postion du click
+                                              #qui est un array basique [x,y] en array de type numpy,
+                                              #surement que numpy a des fonctions qui seront utiles plus tard
+
+def click(event): #fonction qui est appellée quand le joueur clique
+    position_ecran = [event.x, event.y] #recupération de la position du click sur l'écran
     print(position_ecran)
+    position_jeu, click_valide = convertir_position_ecran_vers_jeu(position_écran)
+    print(position_jeu)
 #--------------------------------------
 #Création de la fenêtre + affichage
 #--------------------------------------
@@ -35,7 +42,7 @@ window = Tk()
 window.title('Pipopipette')
 canvas = Canvas(window, width=dimensions_fenetre, height=dimensions_fenetre)
 canvas.pack()
-window.bind('<Button-1>', click)
+window.bind('<Button-1>', click) #on lie le bouton gauche de la souris avec la fonction click (au dessus)
 tour_joueur1 = True
 afficher_grille()
 #--------------------------------------
