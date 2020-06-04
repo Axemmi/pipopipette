@@ -26,15 +26,31 @@ def afficher_grille(): #bah ça affiche la grille vierge, donc les traits en poi
             canvas.create_oval(start_x-epaisseur_point/2, end_x-epaisseur_point/2, start_x+epaisseur_point/2, end_x+epaisseur_point/2, fill=couleur_point, outline=couleur_point)
 
 def convertir_position_ecran_vers_jeu(position_ecran):
-    position_ecran = np.array(position_ecran) #en gros ça convertit la postion du click
-                                              #qui est un array basique [x,y] en array de type numpy,
-                                              #surement que numpy a des fonctions qui seront utiles plus tard
+    position_ecran = np.array(position_ecran) #en gros ça convertit la position du click qui est un array basique [x,y] en array de type numpy, surement que numpy a des fonctions qui seront utiles plus tard
+    position = (position_ecran - distance_entre_points/4)//(distance_entre_points/2) #je sais pas comment ça marche, mais position en pixels --> position sur le plateau
+    print("position sur le plateau : ", position)
+
+    type = False
+    position_jeu = []
+    if position[1] % 2 == 0 and (position[0] - 1) % 2 == 0 : #si la position verticale sur le plateau est paire et que la position en x est impaire, donc que c'est trait horizontal sur la même ligne qu'un point (pas le millieu d'un carré quoi)
+        l = int((position[0]-1)//2)
+        c = int(position[1]//2)
+        position_jeu = [l, c]
+        type = 'ligne'
+
+    elif position[0] % 2 == 0 and (position[1] - 1) % 2 == 0: #pareil mais pour un trait vertical du coup
+        c = int((position[1] - 1) // 2)
+        l = int(position[0] // 2)
+        position_jeu = [l, c]
+        type = 'col'
+
+    return position_jeu, type
 
 def click(event): #fonction qui est appellée quand le joueur clique
     position_ecran = [event.x, event.y] #recupération de la position du click sur l'écran
-    print(position_ecran)
-    position_jeu, click_valide = convertir_position_ecran_vers_jeu(position_écran)
-    print(position_jeu)
+    print("position ecran : ", position_ecran)
+    position_jeu, click_valide = convertir_position_ecran_vers_jeu(position_ecran) # convertit la position sur l'écran en position sur le jeu + le type de clic (ligne, colonne, ou invalide)
+    print("position jeu : ", position_jeu, "type  : ", click_valide)
 #--------------------------------------
 #Création de la fenêtre + affichage
 #--------------------------------------
