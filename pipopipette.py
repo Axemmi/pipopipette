@@ -24,6 +24,10 @@ def afficher_grille(): #bah ça affiche la grille vierge, donc les traits en poi
             start_x = i*distance_entre_points+distance_entre_points/2
             end_x = j*distance_entre_points+distance_entre_points/2
             canvas.create_oval(start_x-epaisseur_point/2, end_x-epaisseur_point/2, start_x+epaisseur_point/2, end_x+epaisseur_point/2, fill=couleur_point, outline=couleur_point)
+
+def click(event):
+    position_ecran = [event.x, event.y]
+    print(position_ecran)
 #--------------------------------------
 #Création de la fenêtre + affichage
 #--------------------------------------
@@ -31,7 +35,7 @@ window = Tk()
 window.title('Pipopipette')
 canvas = Canvas(window, width=dimensions_fenetre, height=dimensions_fenetre)
 canvas.pack()
-# window.bind('<Button-1>', click) --> fonction click pas encore crée, je commente pour éviter les erreurs
+window.bind('<Button-1>', click)
 tour_joueur1 = True
 afficher_grille()
 #--------------------------------------
