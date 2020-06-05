@@ -141,7 +141,7 @@ def afficher_ecran_fin():
         couleur = "gray"
 
     canvas.delete("all")
-    canvas.create_text(dimensions_fenetre / 2, dimensions_fenetre / 3, fill = couleur, text = texte, font = "cmr 60 bold")
+    canvas.create_text(dimensions_fenetre / 2, dimensions_fenetre / 3, fill = couleur, text = texte, font = "cmr 30 bold")
 
     texte_score = "Scores \n"
 

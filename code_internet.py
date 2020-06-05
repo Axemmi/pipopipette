@@ -2,7 +2,7 @@ from tkinter import *
 import numpy as np
 
 size_of_board = 600
-number_of_dots = 6
+number_of_dots = 3
 symbol_size = (size_of_board / 3 - size_of_board / 8) / 2
 symbol_thickness = 50
 dot_color = '#7BC043'
