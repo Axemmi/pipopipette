@@ -15,7 +15,7 @@ couleur_joueur2 = "#e83162"
 couleur_joueur1_carre = "#b8d9e6"
 couleur_joueur2_carre = "#e8bac6"
 tour_joueur1 = True #si true = au tour du joueur 1, si false au tour du joueur 2
-fin_du_jeu = False 
+fermer_fenetre = False # variable qui sert à savoir si l'on doit fermer la fenetre après que l'écran de fin se soit affiché
 #--------------------------------------
 #Fonctions
 #--------------------------------------
@@ -122,7 +122,28 @@ def dessiner_carre(carre, couleur):
     fin_y = debut_y + distance_entre_points - epaisseur_trait
     canvas.create_rectangle(debut_x, debut_y, fin_x, fin_y, fill = couleur, outline = "")
 
-def verifier_fin_du_jeu :
+def verifier_fin_du_jeu():
+    if (statut_ligne == 1).all() and (statut_colonne == 1).all() : #si toutes les colonnes et lignes sont marqués, donc qu'on ne peut plus jouer
+        afficher_ecran_fin()
+
+def afficher_ecran_fin():
+    score_joueur1 = len(np.argwhere(statut_jeu == -4)) #on récupère les scores
+    score_joueur2 = len(np.argwhere(statut_jeu == 4))
+
+    if score_joueur1 > score_joueur2 : #le joueur 1 a gagné
+        texte = "Gagnant : Joueur 1 !"
+        couleur = couleur_joueur1
+    elif score_joueur2 > score_joueur1 : #le joueur 2 a gagné
+        texte = "Gagnant : Joueur 2 !"
+        couleur = couleur_joueur2
+    else:
+        texte = "Égalité !"
+        couleur = "gray"
+
+    canvas.delete("all")
+    canvas.create_text(dimensions_fenetre / 2, dimensions_fenetre / 3, fill = couleur, text = texte, font = "cmr 60 bold")
+
+    texte_score = "Scores \n"
 
 #--------------------------------------
 #Fonction appelée quand on clique, où est gérée la plupart de la logique du déroulement du jeu
