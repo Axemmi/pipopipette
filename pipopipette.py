@@ -33,24 +33,46 @@ def convertir_position_ecran_vers_jeu(position_ecran):
     type = False
     position_jeu = []
     if position[1] % 2 == 0 and (position[0] - 1) % 2 == 0 : #si la position verticale sur le plateau est paire et que la position en x est impaire, donc que c'est trait horizontal sur la même ligne qu'un point (pas le millieu d'un carré quoi)
-        l = int((position[0]-1)//2)
-        c = int(position[1]//2)
-        position_jeu = [l, c]
+        x = int((position[0]-1)//2)
+        y = int(position[1]//2)
+        position_jeu = [x, y]
         type = 'ligne'
 
     elif position[0] % 2 == 0 and (position[1] - 1) % 2 == 0: #pareil mais pour un trait vertical du coup
-        c = int((position[1] - 1) // 2)
-        l = int(position[0] // 2)
-        position_jeu = [l, c]
-        type = 'col'
+        x = int(position[0] // 2)
+        y = int((position[1] - 1) // 2)
+        position_jeu = [x, y]
+        type = 'colonne'
 
     return position_jeu, type
+
+def grille_occupee(position_jeu, type): #regarde dans les tableau si les lignes colonnes sont occupées, à savoir si la valeur est -1 pour le joueur 1 et 1 pour le joueur 2
+    x = position_jeu[0]
+    y = position_jeu[1]
+    occupee = True
+
+    if type == "ligne" and statut_ligne[x][y] == 0: #si dans le tableau des lignes la valeur est égale à zero, pas occupée
+        occupee = False
+    if type == "colonne" and statut_colonne[x][y] == 0:#idem mais pour les colonnes
+        occupee = False
+
+    return occupee
+
+def update_jeu(type, position_jeu):
+    y = position_jeu[0]
+    x = position_jeu[1]
+    valeur = 1
+    if tour_joueur1:
+        valeur =-1
+    if x < (nombre_points - 1) and y < (nombre_points - 1):
+        statut_jeu[x] #fonction pas encore recopiée, c'est la prochaine
 
 def click(event): #fonction qui est appellée quand le joueur clique
     position_ecran = [event.x, event.y] #recupération de la position du click sur l'écran
     print("position ecran : ", position_ecran)
-    position_jeu, click_valide = convertir_position_ecran_vers_jeu(position_ecran) # convertit la position sur l'écran en position sur le jeu + le type de clic (ligne, colonne, ou invalide)
-    print("position jeu : ", position_jeu, "type  : ", click_valide)
+    position_jeu, type = convertir_position_ecran_vers_jeu(position_ecran) # convertit la position sur l'écran en position sur le jeu + le type de clic (ligne, colonne, ou invalide)
+    print("position jeu : ", position_jeu, "type  : ", type)
+    print("grille occupee : ", grille_occupee(position_jeu, type)) #regarde dans les tableaux si la ligne/colonne est occupée
 #--------------------------------------
 #Création de la fenêtre + affichage
 #--------------------------------------
@@ -65,8 +87,8 @@ afficher_grille()
 #Initialisation des tableaux
 #--------------------------------------
 statut_jeu = np.zeros(shape=(nombre_points - 1, nombre_points - 1)) #tableau des carrés
-statut_ligne = np.zeros(shape=(nombre_points, nombre_points - 1))
-col_status = np.zeros(shape=(nombre_points - 1, nombre_points))
+statut_ligne = np.zeros(shape=(nombre_points - 1, nombre_points)) #le gars a inversé les tailles des tableau des lignes et des colonnes
+statut_colonne = np.zeros(shape=(nombre_points, nombre_points - 1)) #je l'ai remis correctement mais il faut faire gaffe à ça en recopiant la suite
 cases_cochees = []
 #--------------------------------------
 #Mainloop, je sais toujours pas ce que ça fait mais sinon le code se lance pas
