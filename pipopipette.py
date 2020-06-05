@@ -12,6 +12,10 @@ distance_entre_points = dimensions_fenetre / nombre_points #distance entre les p
 couleur_point = "#2e2e2e"
 couleur_joueur1 = "#53bfe6"
 couleur_joueur2 = "#e83162"
+couleur_joueur1_carre = "#b8d9e6"
+couleur_joueur2_carre = "#e8bac6"
+tour_joueur1 = True #si true = au tour du joueur 1, si false au tour du joueur 2
+fin_du_jeu = False 
 #--------------------------------------
 #Fonctions
 #--------------------------------------
@@ -68,13 +72,20 @@ def update_jeu(position_jeu, type): #mise à jour des tableaux, pour l'instant q
     if tour_joueur1:
         valeur =-1
 
+    if x < (nombre_points-1) and y < (nombre_points-1): #mise à jour du tableau des carrés
+        statut_jeu[y][x] += valeur
+
     if type == 'ligne': # mise à jour du tableau des lignes
         statut_ligne[y][x] = 1
+        if y >= 1 : # cas supplémentaire pour le tableau des carrés
+            statut_jeu[y-1][x] += valeur
 
     elif type == 'colonne': #idem pour les colonnes
         statut_colonne[y][x] = 1
+        if x >= 1 : # idem, cas supplémentaire pour le tableau des carrés
+            statut_jeu[y][x-1] += valeur
 
-def afficher_trait(position_jeu, type):
+def tracer_trait(position_jeu, type):
     if type == 'ligne':
         debut_x = distance_entre_points / 2 + position_jeu[0] * distance_entre_points
         fin_x = debut_x + distance_entre_points
@@ -93,18 +104,52 @@ def afficher_trait(position_jeu, type):
 
     canvas.create_line(debut_x, debut_y, fin_x, fin_y, fill = couleur, width = epaisseur_trait)
 
-def click(event): #fonction qui est appellée quand le joueur clique
+def trouver_carre():
+    carres = np.argwhere(statut_jeu == -4) #on récupère tout les carrés pour lesquels la valeur est -4, donc ceux remportés par le joueur 1
+    couleur = couleur_joueur1_carre
+    for carre in carres:
+        dessiner_carre(carre, couleur)
+
+    carres = np.argwhere(statut_jeu == 4) #idem mais ceux pour lesquels la valeur est 4, donc remportés par le joueur 2
+    couleur = couleur_joueur2_carre
+    for carre in carres:
+        dessiner_carre(carre, couleur)
+
+def dessiner_carre(carre, couleur):
+    debut_x = distance_entre_points / 2 + carre[1] * distance_entre_points + epaisseur_trait/2
+    debut_y = distance_entre_points / 2 + carre[0] * distance_entre_points + epaisseur_trait/2
+    fin_x = debut_x + distance_entre_points - epaisseur_trait
+    fin_y = debut_y + distance_entre_points - epaisseur_trait
+    canvas.create_rectangle(debut_x, debut_y, fin_x, fin_y, fill = couleur, outline = "")
+
+def verifier_fin_du_jeu :
+
+#--------------------------------------
+#Fonction appelée quand on clique, où est gérée la plupart de la logique du déroulement du jeu
+#--------------------------------------
+def click(event):
+
+    verifier_fin_du_jeu()
+
     position_ecran = [event.x, event.y] #recupération de la position du click sur l'écran
     print("position ecran : ", position_ecran)
+
     position_jeu, type = convertir_position_ecran_vers_jeu(position_ecran) # convertit la position sur l'écran en position sur le jeu + le type de clic (ligne, colonne, ou invalide)
     print("position jeu : ", position_jeu, "type  : ", type)
-    print(grille_occupee(position_jeu, type))
-    if type and not grille_occupee(position_jeu, type):
-        update_jeu(position_jeu, type)
+
+    if type and not grille_occupee(position_jeu, type): #si la position cliqué est une ligne / colonne non occupée
+        update_jeu(position_jeu, type) #mettre à jour les tableaux
         print("statut ligne : ", "\n", statut_ligne)
         print("statut colonne : ","\n", statut_colonne)
-        afficher_trait(position_jeu, type)
-        afficher_grille()
+        print("statut jeu : ", "\n", statut_jeu)
+
+        tracer_trait(position_jeu, type) #trace le trait bleu ou rouge
+        trouver_carre() #trouve les carrés qui ont étés complétés, et appelle une fonction pour les tracer
+        afficher_grille() # on redessine la grille par dessus
+
+        global tour_joueur1 #ensuite on inverse la bool globale tour_joueur1
+        tour_joueur1 = not tour_joueur1 #ça a son importance pour la valeur a ajouter au carré ou la couleur des traits par exemple
+        print("Tour Joueur 1 : ", tour_joueur1)
 #--------------------------------------
 #Création de la fenêtre + affichage
 #--------------------------------------
