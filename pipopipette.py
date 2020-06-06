@@ -1,11 +1,11 @@
-from tkinter import *
-import numpy as np
-
+from tkinter import * #tkinter pour l'affichage
+import numpy as np #numpy pour les tableaux
+import os #os pour pouvoir réouvrir la fenetre quand le jeu est terminé
 #--------------------------------------
 #Variables
 #--------------------------------------
 dimensions_fenetre = 600 #largeur et hauteur de la fenêtre, en pixels
-nombre_points = 4 #nombre de points constituant la largeur du jeu, ex : 4 points équivaut 3x3 cases
+nombre_points = 3 #nombre de points constituant la largeur du jeu, ex : 4 points équivaut 3x3 cases
 epaisseur_point = 0.25 * dimensions_fenetre / nombre_points #l'épaisseur d'un point, en fonction de la taille de la fenêtre
 epaisseur_trait = 0.1 * dimensions_fenetre / nombre_points #idem mais pour les traits
 distance_entre_points = dimensions_fenetre / nombre_points #distance entre les points
@@ -15,7 +15,7 @@ couleur_joueur2 = "#e83162"
 couleur_joueur1_carre = "#b8d9e6"
 couleur_joueur2_carre = "#e8bac6"
 tour_joueur1 = True #si true = au tour du joueur 1, si false au tour du joueur 2
-fermer_fenetre = False # variable qui sert à savoir si l'on doit fermer la fenetre après que l'écran de fin se soit affiché
+recommencer = False # variable qui sert à savoir si l'on doit recommencer le jeu après que l'écran de fin se soit affiché
 #--------------------------------------
 #Fonctions
 #--------------------------------------
@@ -143,14 +143,28 @@ def afficher_ecran_fin():
     canvas.delete("all")
     canvas.create_text(dimensions_fenetre / 2, dimensions_fenetre / 3, fill = couleur, text = texte, font = "cmr 30 bold")
 
-    texte_score = "Scores \n"
+    texte = "Scores :\n"
+    canvas.create_text(dimensions_fenetre / 2, dimensions_fenetre / 2, fill = couleur, text = texte, font = "cmr 20 bold")
 
+    texte = "Joueur 1 : " + str(score_joueur1) + "\n"
+    texte += "Joueur 2 : " + str(score_joueur2) + "\n"
+    canvas.create_text(dimensions_fenetre / 2, dimensions_fenetre / 1.5, fill = couleur, text = texte, font = "cmr 20 bold")
+
+    texte = "Cliquez pour recommencer !"
+    canvas.create_text(dimensions_fenetre / 2, dimensions_fenetre/ 1.3 , fill = couleur, text = texte, font = "cmr 20 bold")
+
+    global recommencer
+    recommencer = True
 #--------------------------------------
 #Fonction appelée quand on clique, où est gérée la plupart de la logique du déroulement du jeu
 #--------------------------------------
 def click(event):
 
-    verifier_fin_du_jeu()
+    if recommencer : #si on doit recommencer, alors la fenetre se réouvre elle-meme
+        print("restart")
+        os.execl(sys.executable, sys.executable, *sys.argv)
+
+    verifier_fin_du_jeu() #on verifie si on peut encore jouer ou si la partie est terminée
 
     position_ecran = [event.x, event.y] #recupération de la position du click sur l'écran
     print("position ecran : ", position_ecran)
