@@ -127,6 +127,10 @@ def verifier_fin_du_jeu():
         afficher_ecran_fin()
 
 def afficher_ecran_fin():
+
+    global texte_tour #on supprime le texte qui affiche le tour
+    canvas.delete(texte_tour)
+
     score_joueur1 = len(np.argwhere(statut_jeu == -4)) #on récupère les scores
     score_joueur2 = len(np.argwhere(statut_jeu == 4))
 
@@ -155,6 +159,19 @@ def afficher_ecran_fin():
 
     global recommencer
     recommencer = True
+
+def afficher_texte_tour(): #la fonction met à jour le texte qui affiche qui joue
+    texte = "C'est au tour du "
+    if tour_joueur1 :
+        texte += "Joueur 1"
+        couleur = couleur_joueur1
+    else:
+        texte += "Joueur 2"
+        couleur = couleur_joueur2
+
+    global texte_tour #on supprime le texte précédent, et on en crée un nouveau
+    canvas.delete(texte_tour)
+    texte_tour = canvas.create_text(dimensions_fenetre - dimensions_fenetre / 3.5, dimensions_fenetre - dimensions_fenetre / 30,fill = couleur, text = texte, font = "cmr 20 bold" )
 #--------------------------------------
 #Fonction appelée quand on clique, où est gérée la plupart de la logique du déroulement du jeu
 #--------------------------------------
@@ -185,6 +202,8 @@ def click(event):
         global tour_joueur1 #ensuite on inverse la bool globale tour_joueur1
         tour_joueur1 = not tour_joueur1 #ça a son importance pour la valeur a ajouter au carré ou la couleur des traits par exemple
         print("Tour Joueur 1 : ", tour_joueur1)
+        afficher_texte_tour() #on met à jour le texte en bas à droite
+
 #--------------------------------------
 #Création de la fenêtre + affichage
 #--------------------------------------
@@ -195,6 +214,7 @@ canvas.pack()
 window.bind('<Button-1>', click) #on lie le bouton gauche de la souris avec la fonction click (au dessus)
 tour_joueur1 = True
 afficher_grille()
+texte_tour = canvas.create_text(dimensions_fenetre - dimensions_fenetre / 3.5, dimensions_fenetre - dimensions_fenetre / 30,fill = couleur_joueur1, text = "C'est au tour du Joueur 1", font = "cmr 20 bold" )
 #--------------------------------------
 #Initialisation des tableaux
 #--------------------------------------
